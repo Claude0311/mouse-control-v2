@@ -1,20 +1,11 @@
 import express from "express"
 import robot from "robotjs"
-import asyncHandler from "express-async-handler"
-import axios from "axios"
+
 import env from 'dotenv'
 
 env.config('./.env')
 
 const router = express.Router()
-
-router.get('/',()=>{})
-
-router.get('/image',asyncHandler(async (req,res)=>{
-    const baseUrl = process.env.baseUrl
-    const img = await axios.get(baseUrl+'/image')
-    res.send(img)
-}))
 
 router.post('/ck',(req,res)=>{
     const {sig} = req.body
