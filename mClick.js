@@ -1,9 +1,11 @@
-import express from "express"
-import robot from "robotjs"
+// import express from "express"
+// import robot from "robotjs"
+// import env from 'dotenv'
+const express = require('express')
+const robot = require('robotjs')
+const env = require('dotenv')
 
-import env from 'dotenv'
-
-env.config('./.env')
+env.config()
 
 const router = express.Router()
 
@@ -40,4 +42,5 @@ router.use((err,req,res,next)=>{
     res.status('403').send('error occur')
 })
 
-export default router
+// export default router
+module.exports = router

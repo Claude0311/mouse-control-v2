@@ -1,23 +1,43 @@
-import axios from 'axios'
-import env from 'dotenv'
-import express from 'express'
-import asyncHandler from "express-async-handler"
-import fs from 'fs'
-import robot from "robotjs"
-import Jimp from 'jimp'
-env.config('./.env')
+// import axios from 'axios'
+// import env from 'dotenv'
+// import express from 'express'
+// import asyncHandler from "express-async-handler"
+// import fs from 'fs'
+// import robot from "robotjs"
+// import Jimp from 'jimp'
+// import path from 'path'
+const axios = require('axios')
+const env = require('dotenv')
+const express = require('express')
+const asyncHandler = require('express-async-handler')
+const fs = require('fs')
+const robot = require('robotjs')
+const Jimp = require('jimp')
+const path = require('path')
+// const imageBrightness = require('image-brightness')
+
+env.config()
 
 let baseUrl = ""
 let screen = []
+
+// const __dirname = path.resolve()
+// const confpath = path.join(__dirname,'dist/config.json')
+const confpath = './laser-mouse-conf.json'
 const save = ()=>{
-    fs.writeFile('config.json', JSON.stringify({screen,baseUrl}), (err) => {
-        if (err) throw err
+    fs.writeFile(confpath, JSON.stringify({screen,baseUrl}), (err) => {
+        if (err) {
+            console.log(err)
+            return //throw err
+        }
         console.log("JSON data is saved.");
     })
 }
-fs.readFile('config.json', 'utf-8', (err, data) => {
-    console.log('log config done')
-    if (err) throw err
+fs.readFile(confpath, 'utf-8', (err, data) => {
+    if (err) {
+        console.log('config empty')
+        return
+    }
     const conf = JSON.parse(data.toString())
     // console.log('config',conf)
     if(conf.screen) screen = conf.screen
@@ -77,19 +97,28 @@ router.post('/laser',(req,res)=>{
     res.end()
 })
 
+
 router.get('/image',asyncHandler(async (req,res)=>{
     gettingImg = true
+    // const img = await axios.get(baseUrl+'/image',{
+    //     responseType: 'arraybuffer'
+    // })
+    // gettingImg = false
+    // const imguri = "data:" + img.headers["content-type"] + ";base64,"+Buffer.from(img.data).toString('base64')
+    // const newuri = imageBrightness({data:img,adjustment:30,asDataURL: true})
+    // res.send({screen,imguri:newuri})
     const img = await axios.get(baseUrl+'/image',{
         responseType: "stream"
     })
     gettingImg = false
     console.log('get done')
-    const pipeload = img.data.pipe(fs.createWriteStream("./public/new.png"))
+    const imgpath = './laser mouse screen.png'//path.join(__dirname,'dist/new.png')
+    const pipeload = img.data.pipe(fs.createWriteStream(imgpath))
     pipeload.on('finish',async ()=>{
-        const im = await Jimp.read('./public/new.png')
-        await im.brightness(0.15)
-        .writeAsync('./public/new.png')
-        res.send(screen)
+        const im = await Jimp.read(imgpath)
+        const imguri = await im.brightness(0.15).getBase64Async(Jimp.AUTO)
+        // .writeAsync(imgpath)
+        res.send({screen,imguri})
     })
 }))
 
@@ -146,4 +175,5 @@ const move = async ()=>{
     return true
 }
 
-export {move, router}
+// export {move, router}
+module.exports = {move, router}
