@@ -16,9 +16,28 @@ app.use('/', express.static(__dirname + '/public'))
 app.use(moveR)
 app.use(clickR)
 
-const port = process.env.port || 5000
-app.listen(port,'0.0.0.0',()=>{
-    console.log(`server on port ${port}`)
-    open(`http://localhost:${port}`)
-    setInterval(move,10)
-})
+import portfinder from 'portfinder'
+import {networkInterfaces} from 'os'
+const findport = async (start=5000)=>await portfinder.getPortPromise({port:start})
+
+const main = async()=>{
+    const port = process.env.port || await findport()
+    const ips = networkInterfaces()
+    const ip = Object.entries(ips).reduce((acc,[key,val])=>{
+        val.forEach(({family,internal,address})=>{
+            if(family==='IPv4' && !internal) acc[key]=address
+        })
+        return acc
+    },{})
+    console.log('ip addresses:')
+    console.log(ip)
+    app.get('/port',(req,res)=>{
+        res.send({ip,port})
+    })
+    app.listen(port,'0.0.0.0',()=>{
+        console.log(`server on port ${port}`)
+        open(`http://localhost:${port}`)
+        setInterval(move,10)
+    })
+}
+main()

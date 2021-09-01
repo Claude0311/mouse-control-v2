@@ -15,12 +15,11 @@ const save = ()=>{
         console.log("JSON data is saved.");
     })
 }
-console.log('reading')
 fs.readFile('config.json', 'utf-8', (err, data) => {
-    console.log('log done')
+    console.log('log config done')
     if (err) throw err
     const conf = JSON.parse(data.toString())
-    console.log('config',conf)
+    // console.log('config',conf)
     if(conf.screen) screen = conf.screen
     if(conf.baseUrl) baseUrl = conf.baseUrl
 })
@@ -48,7 +47,7 @@ router.post('/baseUrl',(req,res)=>{
     res.send()
 })
 router.get('/baseUrl',(req,res)=>{
-    console.log('baseurl',baseUrl)
+    console.log('RPi url',baseUrl)
     res.send({baseUrl})
 })
 
@@ -79,7 +78,6 @@ router.post('/laser',(req,res)=>{
 })
 
 router.get('/image',asyncHandler(async (req,res)=>{
-    console.log('require')
     gettingImg = true
     const img = await axios.get(baseUrl+'/image',{
         responseType: "stream"

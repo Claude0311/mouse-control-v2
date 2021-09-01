@@ -1,3 +1,4 @@
+
 const laserBtn = document.getElementById('laserControl')
 axios.get('/laserControl').then(({data})=>{
     const {laser} = data
@@ -16,3 +17,13 @@ axios.get('/baseUrl').then(({data})=>{
 urlSend.onclick = function (){
     axios.post('/baseUrl',{baseUrl:urlText.value})
 }
+
+const ipText = document.getElementById('ip')
+axios.get('/port').then(({data})=>{
+    const {ip,port} = data
+    const iparr = Object.entries(ip).map(([key,val])=>{
+        const ref = `http://${val}:${port}`
+        return `${key} on <a href='${ref}'>${ref}</a>`
+    })
+    ipText.innerHTML = "<li>"+iparr.join("</li><li>")+"</li>"
+})
