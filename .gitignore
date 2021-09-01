@@ -1,3 +1,4 @@
 /node_modules
 test.js
-/output
+/output/*.png
+/output/*.json
