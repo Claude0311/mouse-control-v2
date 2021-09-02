@@ -44,14 +44,14 @@ img.onload = function(){
         const circle = new Konva.Circle({
             radius: 30,
             fill: color,
-            opacity: 1,
+            opacity: 0.8,
         });
         group.on('mouseover', function () {
-            this.getChildren()[0].opacity(0.5)
+            this.getChildren()[0].opacity(0.3)
             document.body.style.cursor = 'pointer';
         });
         group.on('mouseout', function () {
-            this.getChildren()[0].opacity(1)
+            this.getChildren()[0].opacity(0.8)
             document.body.style.cursor = 'default';
             // console.log(this.position())
         });
@@ -59,14 +59,14 @@ img.onload = function(){
         const line1 = new Konva.Line({
             points: [lineLen,0,-lineLen,0],
             stroke: 'black',
-            strokeWidth: 5,
+            strokeWidth: 3,
             lineCap: 'round',
             lineJoin: 'round'
         })
         const line2 = new Konva.Line({
             points: [0,lineLen,0,-lineLen],
             stroke: 'black',
-            strokeWidth: 5,
+            strokeWidth: 3,
             lineCap: 'round',
             lineJoin: 'round',
         })
